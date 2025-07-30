@@ -16,7 +16,7 @@ export default function SalutPage() {
   const [capsules, setCapsules] = useState<Capsule[]>([]);
   const [form, setForm] = useState({ title: '', description: '', imageUrl: '' });
 
-  /* 1️⃣ fetch on mount */
+  /* 1️ fetch on mount */
   useEffect(() => {
     if (status === 'authenticated') {
       fetch('/api/capsules')
@@ -26,7 +26,7 @@ export default function SalutPage() {
     }
   }, [status]);
 
-  /* 2️⃣ add capsule */
+  /* 2️ add capsule */
   async function handleAdd(e: FormEvent) {
     e.preventDefault();
     const res = await fetch('/api/capsules', {
@@ -41,7 +41,7 @@ export default function SalutPage() {
     }
   }
 
-  /* 3️⃣ delete capsule */
+  /* 3️ delete  */
   async function handleDelete(id: string) {
     const res = await fetch(`/api/capsules/${id}`, { method: 'DELETE' });
     if (res.ok) setCapsules(prev => prev.filter(c => c.id !== id));
