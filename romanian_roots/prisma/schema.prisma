@@ -7,6 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model CultureCapsule {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+
 model User {
   id        String   @id @default(uuid())
   name      String
@@ -14,4 +25,6 @@ model User {
   password  String
   isPremium Boolean  @default(false)
   createdAt DateTime @default(now())
+
+  capsules  CultureCapsule[]
 }
