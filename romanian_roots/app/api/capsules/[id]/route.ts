@@ -1,39 +1,63 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from "@/lib/auth";
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 
+// GET /api/capsules/[id]
+export async function GET(
+  req: Request,
+  context: { params: { id: string } }
+) {
+  const { id } = context.params
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
   const capsule = await prisma.cultureCapsule.findUnique({
-    where: { id: params.id },
-  });
+    where: { id },
+  })
 
-  if (!capsule) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  if (!capsule) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  }
 
-  return NextResponse.json(capsule);
+  return NextResponse.json(capsule)
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+// PUT /api/capsules/[id]
+export async function PUT(
+  req: Request,
+  context: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions)
 
-  const data = await req.json();
-  const { title, description, imageUrl } = data;
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const { id } = context.params
+  const data = await req.json()
+  const { title, description, imageUrl } = data
 
   const updated = await prisma.cultureCapsule.update({
-    where: { id: params.id },
+    where: { id },
     data: { title, description, imageUrl },
-  });
+  })
 
-  return NextResponse.json(updated);
+  return NextResponse.json(updated)
 }
 
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+// DELETE /api/capsules/[id]
+export async function DELETE(
+  req: Request,
+  context: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions)
 
-  await prisma.cultureCapsule.delete({ where: { id: params.id } });
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
-  return NextResponse.json({ message: 'Deleted' });
+  const { id } = context.params
+
+  await prisma.cultureCapsule.delete({ where: { id } })
+
+  return NextResponse.json({ message: 'Deleted' })
 }
