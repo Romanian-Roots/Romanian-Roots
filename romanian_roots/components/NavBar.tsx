@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { User } from 'lucide-react';
 
 const links = [
   { href: '/harta', label: 'Harta' },
@@ -35,17 +34,24 @@ export default function NavBar() {
               key={l.href}
               onClick={() => router.push(l.href)}
               className={`${
-                path === l.href ? 'text-red-500' : 'text-gray-600'
-              } hover:text-red-500 transition-colors`}
+                path === l.href ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
+              } transition-colors`}
             >
               {l.label}
             </button>
           ))}
-          {session && (
+
+          {session ? (
             <>
-              <span className="text-gray-700 font-medium">
+              {/* ← Now highlighted red when on /salut */}
+              <button
+                onClick={() => router.push('/salut')}
+                className={`${
+                  path === '/salut' ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
+                } transition-colors font-medium`}
+              >
                 Salut, {session.user?.name || session.user?.email}!
-              </span>
+              </button>
               <button
                 onClick={() => signOut()}
                 className="bg-red-400 text-white px-4 py-2 rounded-lg hover:bg-red-500 transition-colors font-medium"
@@ -53,8 +59,7 @@ export default function NavBar() {
                 Deconectează-te
               </button>
             </>
-          )}
-          {!session && (
+          ) : (
             <>
               <button
                 onClick={() => router.push('/login')}
@@ -84,23 +89,12 @@ export default function NavBar() {
             viewBox="0 0 24 24"
           >
             {open ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 8h16M4 16h16"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
             )}
           </svg>
         </button>
-        
       </div>
 
       {/* Mobile menu */}
@@ -118,7 +112,26 @@ export default function NavBar() {
               {l.label}
             </button>
           ))}
-          {!session && (
+
+          {session ? (
+            <div className="px-6 py-3 border-t border-red-100">
+              <button
+                onClick={() => {
+                  router.push('/salut');
+                  setOpen(false);
+                }}
+                className="block w-full text-left mb-2 text-gray-700 hover:text-red-500 transition-colors font-medium"
+              >
+                Salut, {session.user?.name || session.user?.email}!
+              </button>
+              <button
+                onClick={() => signOut()}
+                className="w-full bg-red-400 text-white py-2 rounded-lg hover:bg-red-500 transition-colors font-medium"
+              >
+                Deconectează-te
+              </button>
+            </div>
+          ) : (
             <>
               <button
                 onClick={() => {
@@ -139,19 +152,6 @@ export default function NavBar() {
                 Sign Up
               </button>
             </>
-          )}
-          {session && (
-            <div className="px-6 py-3 border-t border-red-100">
-              <span className="block mb-2 text-gray-700">
-                Salut, {session.user?.name || session.user?.email}!
-              </span>
-              <button
-                onClick={() => signOut()}
-                className="w-full bg-red-400 text-white py-2 rounded-lg hover:bg-red-500 transition-colors font-medium"
-              >
-                Deconectează-te
-              </button>
-            </div>
           )}
         </div>
       )}

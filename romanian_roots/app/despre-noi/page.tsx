@@ -48,15 +48,15 @@ export default function DespreNoiPage() {
               </button>
             </div>
           </div>
-          <div className="rounded-lg h-96 overflow-hidden">
-            <Image
-              src="/map.png"
-              alt="Harta României"
-              width={400}
-              height={300}
-              className="w-full h-full object-cover"
-            />
-          </div>
+            <div className="w-full max-w-lg mx-auto overflow-hidden rounded-lg">
+              <Image
+                src="/map.png"
+                alt="Harta României"
+                width={800}       
+                height={600}      
+                className="w-full h-auto object-cover"
+              />
+            </div>
         </div>
 
         {/* Values Section */}
@@ -188,9 +188,9 @@ export default function DespreNoiPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { name: "Beudean Carmen", role: "Planning Expert", description: "Dornică să călătoresc", image: "carmen.jpg" },
-              { name: "Asandei Georgiana", role: "Frontend developer", description: "Mereu curioasă", image: "georgi.jpg" },
-              { name: "Zsigmond Arthur", role: "Backend developer", description: "Încântat să ajut cultura românească", image: "arthur.jpg" },
-              { name: "Jakab Mihaly", role: "Graphic Designer", description: "Absorbit de viața de urbană", image: "misi.jpg" }
+              { name: "Asandei Georgiana", role: "Frontend Developer", description: "Mereu curioasă", image: "georgi.jpg" },
+              { name: "Zsigmond Arthur", role: "Backend Developer / DevOps", description: "Trăiesc împreună cu tehnologia", image: "arthur.jpg" },
+              { name: "Jakab Mihaly", role: "Graphic Designer", description: "Absorbit de viața urbană", image: "misi.jpg" }
             ].map((member, index) => (
               <div key={index} className="bg-white rounded-lg p-6 shadow-sm border border-red-100 text-center">
                 <div className="bg-gradient-to-br from-red-100 to-rose-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4 overflow-hidden">
