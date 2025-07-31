@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
 import dynamic from 'next/dynamic';
 import type L from 'leaflet';
 
@@ -126,8 +126,11 @@ const filtered = capsules.filter(c =>
   <h2 className="text-xl font-semibold text-gray-900 mb-4">Filtrează după stare</h2>
   <div className="flex items-center gap-4">
     <select
-      value={filterStatus}
-      onChange={e => setFilterStatus(e.target.value as any)}
+value={filterStatus}
+ onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+   const v = e.target.value as 'ALL' | 'FOUND' | 'SPONSOR' | 'CLUE';
+   setFilterStatus(v);
+ }}
       className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 text-gray-900"
     >
       <option value="ALL">Toate</option>
