@@ -215,22 +215,22 @@ async function handleAdd(e: FormEvent) {
       className="bg-white p-6 rounded-lg shadow-sm border border-red-100"
     >
       <h3 className="text-lg font-medium text-gray-900 mb-2">Introdu codul capsulei găsite</h3>
-      <div className="flex space-x-2">
-        <input
-          type="text"
-          maxLength={4}
-          value={codeInput}
-          onChange={e => setCodeInput(e.target.value)}
-          placeholder="1234"
-          className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 text-center"
-        />
-        <button
-          type="submit"
-          className="bg-red-400 text-white px-6 rounded-lg hover:bg-red-500 transition-colors font-medium"
-        >
-          Verifică
-        </button>
-      </div>
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            maxLength={4}
+            value={codeInput}
+            onChange={e => setCodeInput(e.target.value)}
+            placeholder="1234"
+            className="w-24 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 transition-colors text-center text-gray-900"
+          />
+          <button
+            type="submit"
+            className="bg-red-400 text-white px-6 py-3 rounded-lg hover:bg-red-500 transition-colors font-medium"
+          >
+            Verifică
+          </button>
+        </div>
     </form>
   </div>
   {/* ———————————————— */}
