@@ -3,11 +3,11 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-/* utility – extract <id> from /api/capsules/[id] */
+/* helper – extract <id> from /api/capsules/[id] */
 const getId = (req: NextRequest) =>
   req.nextUrl.pathname.split('/').pop() as string;
 
-/* ─────────────────────────────────────────────────────────────── GET ─── */
+/* ───────────────────────────── GET /api/capsules/[id] ─────────────── */
 export async function GET(req: NextRequest) {
   const id = getId(req);
 
@@ -15,12 +15,12 @@ export async function GET(req: NextRequest) {
     where: { id },
     select: {
       id: true,
-      title: true,
+      name: true,
       description: true,
       imageUrl: true,
       latitude: true,
       longitude: true,
-      found: true,
+      status: true,            
       createdAt: true,
       user: { select: { id: true, name: true } },
     }, // codeHash intentionally omitted
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(capsule);
 }
 
-/* ─────────────────────────────────────────────────────────────── PUT ─── */
+/* ───────────────────────────── PUT /api/capsules/[id] ─────────────── */
 export async function PUT(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email)
@@ -40,30 +40,32 @@ export async function PUT(req: NextRequest) {
 
   const id = getId(req);
   const {
-    title,
+    name,
     description,
     imageUrl,
     latitude,
     longitude,
+    status,               // allow changing status if you want
   }: Partial<{
-    title: string;
+    name: string;
     description: string;
     imageUrl: string;
     latitude: number;
     longitude: number;
+    status: 'FOUND' | 'SPONSOR' | 'CLUE';
   }> = await req.json();
 
   const updated = await prisma.cultureCapsule.update({
     where: { id },
-    data: { title, description, imageUrl, latitude, longitude },
+    data: { name, description, imageUrl, latitude, longitude, status },
     select: {
       id: true,
-      title: true,
+      name: true,
       description: true,
       imageUrl: true,
       latitude: true,
       longitude: true,
-      found: true,
+      status: true,
       createdAt: true,
     },
   });
@@ -71,7 +73,7 @@ export async function PUT(req: NextRequest) {
   return NextResponse.json(updated);
 }
 
-/* ──────────────────────────────────────────────────────────── DELETE ─── */
+/* ─────────────────────────── DELETE /api/capsules/[id] ────────────── */
 export async function DELETE(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email)

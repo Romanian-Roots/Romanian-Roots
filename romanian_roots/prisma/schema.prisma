@@ -7,9 +7,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/* ------------------------------------------------------------------ */
-/*  Models                                                            */
-/* ------------------------------------------------------------------ */
+/* ----------------------------------------------------------- */
+/*  ENUMS                                                      */
+/* ----------------------------------------------------------- */
+
+enum CapsuleStatus {
+  FOUND       // already discovered (exact pin)
+  SPONSOR     // placed by a regular user; behaves like FOUND
+  CLUE        // not yet found; pin exists but description says “±10 m”
+}
+
+/* ----------------------------------------------------------- */
+/*  MODELS                                                     */
+/* ----------------------------------------------------------- */
 
 model User {
   id        String           @id @default(uuid())
@@ -24,20 +34,20 @@ model User {
 
 model CultureCapsule {
   id          String   @id @default(uuid())
-  title       String
+  name        String
   description String
   imageUrl    String?
   createdAt   DateTime @default(now())
 
-  /* Geo-location  -------------------------------------------------- */
+  /* Geo-location ------------------------------------------- */
   latitude    Float
   longitude   Float
 
-  /* Status & code  ------------------------------------------------- */
-  found       Boolean  @default(false)  // toggled when code is validated
-  codeHash    String                  // hashed 4-digit code
+  /* Status & code ------------------------------------------- */
+  status      CapsuleStatus @default(CLUE)
+  codeHash    String                       // hashed 4-digit code
 
-  /* Relation to creator  ------------------------------------------ */
+  /* Relation to creator ------------------------------------- */
   userId String
   user   User     @relation(fields: [userId], references: [id])
 }
