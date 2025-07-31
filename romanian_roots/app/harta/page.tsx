@@ -1,12 +1,47 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
+import type L from 'leaflet';
+
+type Capsule = {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  status: 'FOUND' | 'SPONSOR' | 'CLUE';
+};
+
+const LeafletMap = dynamic(
+  async () => {
+    const leaflet = await import('leaflet');
+
+    const LeafletInner = ({ pins }: { pins: Capsule[] }) => (
+      <Map pins={pins} L={leaflet} />
+    );
+    LeafletInner.displayName = 'LeafletMap';
+    return LeafletInner;
+  },
+  { ssr: false }
+);
 
 export default function HartaPage() {
   const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [capsules, setCapsules] = useState<Capsule[]>([]);
+
+useEffect(() => {
+  fetch('/api/capsules')
+    .then(r => r.json())
+    .then(setCapsules)
+    .catch(console.error);
+}, []);
+
+const filtered = capsules.filter(c =>
+  c.name.toLowerCase().includes(searchQuery.toLowerCase())
+);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,19 +171,11 @@ export default function HartaPage() {
           </div>
         </div>
 
-        {/* Map Placeholder */}
-        <div className="bg-white rounded-lg shadow-sm border border-red-100 p-8">
-          <div className="bg-gray-100 rounded-lg h-96 flex items-center justify-center">
-            <div className="text-center">
-              <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">Harta se încarcă...</h3>
-              <p className="text-gray-500">Aici va fi afișată harta interactivă cu toate capsulele culturale</p>
-            </div>
-          </div>
-        </div>
+{/* Map */}
+<section className="bg-white rounded-lg shadow-sm border border-red-100 p-0 mb-10">
+  <LeafletMap pins={filtered} />
+</section>
+
 
         {/* Results Grid */}
         <div className="mt-8">
@@ -179,4 +206,64 @@ export default function HartaPage() {
       </main>
     </div>
   );
+}
+
+function Map({
+  pins,
+  L,
+}: {
+  pins: Capsule[];
+  L: typeof import('leaflet');
+}) {
+  const mapRef = useRef<L.Map | null>(null);
+
+  const statusColor: Record<Capsule['status'], string> = {
+    FOUND: 'red',
+    SPONSOR: 'blue',
+    CLUE: 'gold',
+  };
+
+  /* init map once */
+  useEffect(() => {
+    if (mapRef.current) return;
+
+    mapRef.current = L.map('map', {
+      center: [45.9432, 24.9668],
+      zoom: 6,
+      maxBounds: L.latLngBounds(L.latLng(43.5, 20.0), L.latLng(48.5, 30.0)),
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(mapRef.current);
+  }, [L]);
+
+  /* refresh markers */
+  useEffect(() => {
+    if (!mapRef.current) return;
+// remove previous markers
+mapRef.current.eachLayer((layer: L.Layer) => {
+  if (layer instanceof L.Marker) mapRef.current!.removeLayer(layer);
+});
+
+    // add new markers
+    pins.forEach(pin => {
+      const icon = L.icon({
+        iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${statusColor[pin.status]}.png`,
+        shadowUrl:
+          'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+      });
+
+      L.marker([pin.latitude, pin.longitude], { icon })
+        .addTo(mapRef.current!)
+        .bindPopup(`<b>${pin.name}</b><br>Status: ${pin.status.toLowerCase()}`);
+    });
+  }, [pins, L]);
+
+  return <div id="map" className="h-96 w-full rounded-lg" />;
 }
