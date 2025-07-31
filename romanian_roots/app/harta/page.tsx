@@ -29,7 +29,7 @@ const LeafletMap = dynamic(
 export default function HartaPage() {
   const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+const [filterStatus, setFilterStatus] = useState<'ALL' | Capsule['status']>('ALL');
   const [capsules, setCapsules] = useState<Capsule[]>([]);
 
 useEffect(() => {
@@ -40,14 +40,8 @@ useEffect(() => {
 }, []);
 
 const filtered = capsules.filter(c =>
-  c.name.toLowerCase().includes(searchQuery.toLowerCase())
+  filterStatus === 'ALL' || c.status === filterStatus
 );
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement search functionality
-    console.log('Searching for:', searchQuery);
-  };
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -84,27 +78,6 @@ const filtered = capsules.filter(c =>
               >
                 Contact
               </button>
-            </div>
-
-            {/* Search Bar */}
-            <div className="hidden md:block">
-              <form onSubmit={handleSearch} className="relative">
-                <input
-                  type="text"
-                  placeholder="Caută..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-64 px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 transition-colors text-gray-900 placeholder-gray-500"
-                />
-                <svg 
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500"
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </form>
             </div>
 
             {/* Profile Menu */}
@@ -150,26 +123,27 @@ const filtered = capsules.filter(c =>
 
         {/* Filters Section */}
         <div className="bg-white rounded-lg shadow-sm border border-red-100 p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Filtrează după</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 text-gray-900">
-              <option>Toate județele</option>
-              <option>București</option>
-              <option>Cluj</option>
-              <option>Brașov</option>
-              <option>Constanța</option>
-            </select>
-            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 text-gray-900">
-              <option>Toate tipurile</option>
-              <option>🔵- Găsite</option>
-              <option>🟡- Parteneri</option>
-              <option>🔴- Cu indicii</option>
-            </select>
-            <button className="bg-red-400 text-white px-6 py-2 rounded-lg hover:bg-red-500 transition-colors">
-              Aplică filtrele
-            </button>
-          </div>
-        </div>
+  <h2 className="text-xl font-semibold text-gray-900 mb-4">Filtrează după stare</h2>
+  <div className="flex items-center gap-4">
+    <select
+      value={filterStatus}
+      onChange={e => setFilterStatus(e.target.value as any)}
+      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 text-gray-900"
+    >
+      <option value="ALL">Toate</option>
+      <option value="FOUND">🔴 Găsite</option>
+      <option value="SPONSOR">🔵 Parteneri</option>
+      <option value="CLUE">🟡 Cu indicii</option>
+    </select>
+    <button
+      onClick={() => {}}
+      className="bg-red-400 text-white px-6 py-2 rounded-lg hover:bg-red-500 transition-colors"
+    >
+      Aplică filtrele
+    </button>
+  </div>
+</div>
+
 
 {/* Map */}
 <section className="bg-white rounded-lg shadow-sm border border-red-100 p-0 mb-10">
@@ -218,12 +192,11 @@ function Map({
   const mapRef = useRef<L.Map | null>(null);
 
   const statusColor: Record<Capsule['status'], string> = {
-    FOUND: 'red',
-    SPONSOR: 'blue',
-    CLUE: 'gold',
+    FOUND: 'red',    // 🔴 found
+    SPONSOR: 'blue', // 🔵 sponsor
+    CLUE: 'gold',    // 🟡 clue
   };
 
-  /* init map once */
   useEffect(() => {
     if (mapRef.current) return;
 
@@ -232,22 +205,18 @@ function Map({
       zoom: 6,
       maxBounds: L.latLngBounds(L.latLng(43.5, 20.0), L.latLng(48.5, 30.0)),
     });
-
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(mapRef.current);
   }, [L]);
 
-  /* refresh markers */
   useEffect(() => {
     if (!mapRef.current) return;
-// remove previous markers
-mapRef.current.eachLayer((layer: L.Layer) => {
-  if (layer instanceof L.Marker) mapRef.current!.removeLayer(layer);
-});
+    mapRef.current.eachLayer(layer => {
+      if (layer instanceof L.Marker) mapRef.current!.removeLayer(layer);
+    });
 
-    // add new markers
     pins.forEach(pin => {
       const icon = L.icon({
         iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${statusColor[pin.status]}.png`,
@@ -261,7 +230,7 @@ mapRef.current.eachLayer((layer: L.Layer) => {
 
       L.marker([pin.latitude, pin.longitude], { icon })
         .addTo(mapRef.current!)
-        .bindPopup(`<b>${pin.name}</b><br>Status: ${pin.status.toLowerCase()}`);
+        .bindPopup(`<b>${pin.name}</b><br>Status: ${pin.status}`);
     });
   }, [pins, L]);
 
