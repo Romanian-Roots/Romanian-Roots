@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
+import NavBar from '@/components/NavBar';
 
 export default function DespreNoiPage() {
   const router = useRouter();
@@ -11,138 +12,7 @@ export default function DespreNoiPage() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      {/* Navigation Bar */}
-      <nav className="bg-white shadow-sm border-b border-red-100 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          {/* Logo/Brand */}
-          <button 
-            onClick={() => router.push('/')}
-            className="text-xl font-bold text-red-600 hover:text-red-700 transition-colors"
-          >
-            Capsula Culturală
-          </button>
-          
-          {/* Navigation Links and Profile Menu */}
-          <div className="flex items-center space-x-6">
-            {/* Desktop Navigation Links */}
-            <div className="hidden md:flex space-x-6">
-              <button 
-                onClick={() => router.push('/harta')}
-                className="text-gray-600 hover:text-red-500 transition-colors"
-              >
-                Harta
-              </button>
-              <button 
-                onClick={() => router.push('/despre-noi')}
-                className="text-red-500 font-medium transition-colors"
-              >
-                Despre noi
-              </button>
-              <button 
-                onClick={() => router.push('/contact')}
-                className="text-gray-600 hover:text-red-500 transition-colors"
-              >
-                Contact
-              </button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-
-            {/* Desktop Profile Menu */}
-            <div className="relative hidden md:block">
-              <button
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-              >
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </button>
-              
-              {showProfileMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
-                  <button
-                    onClick={() => router.push('/login')}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Log In
-                  </button>
-                  <button
-                    onClick={() => router.push('/signup')}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Sign Up
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {showMobileMenu && (
-          <div className="md:hidden mt-4 py-4 border-t border-red-100">
-            <div className="flex flex-col space-y-4">
-              <button 
-                onClick={() => {
-                  router.push('/harta');
-                  setShowMobileMenu(false);
-                }}
-                className="text-left text-gray-600 hover:text-red-500 transition-colors py-2"
-              >
-                Harta
-              </button>
-              <button 
-                onClick={() => {
-                  router.push('/despre-noi');
-                  setShowMobileMenu(false);
-                }}
-                className="text-left text-red-500 font-medium transition-colors py-2"
-              >
-                Despre noi
-              </button>
-              <button 
-                onClick={() => {
-                  router.push('/contact');
-                  setShowMobileMenu(false);
-                }}
-                className="text-left text-gray-600 hover:text-red-500 transition-colors py-2"
-              >
-                Contact
-              </button>
-              <div className="border-t border-gray-200 pt-4 mt-4">
-                <button
-                  onClick={() => {
-                    router.push('/login');
-                    setShowMobileMenu(false);
-                  }}
-                  className="block w-full text-left text-gray-700 hover:text-red-500 transition-colors py-2"
-                >
-                  Log In
-                </button>
-                <button
-                  onClick={() => {
-                    router.push('/signup');
-                    setShowMobileMenu(false);
-                  }}
-                  className="block w-full text-left text-gray-700 hover:text-red-500 transition-colors py-2"
-                >
-                  Sign Up
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </nav>
-
+      <NavBar />
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-12">
         {/* Hero Section */}
