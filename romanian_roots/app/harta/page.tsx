@@ -8,6 +8,9 @@ import type L from 'leaflet';
 type Capsule = {
   id: string;
   name: string;
+  description: string;
+  imageUrl?: string | null;
+  createdAt: string;
   latitude: number;
   longitude: number;
   status: 'FOUND' | 'SPONSOR' | 'CLUE';
@@ -158,22 +161,42 @@ value={filterStatus}
         <div className="mt-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Capsule culturale populare</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Sample Cultural Capsule Cards */}
-            {[1, 2, 3, 4, 5, 6].map((item) => (
-              <div key={item} className="bg-white rounded-lg shadow-sm border border-red-100 overflow-hidden hover:shadow-md transition-shadow">
-                <div className="bg-gradient-to-r from-red-100 to-rose-100 h-48 flex items-center justify-center">
-                  <svg className="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                </div>
+            {capsules.map(capsule => (
+              <div
+                key={capsule.id}
+                className="bg-white rounded-lg shadow-sm border border-red-100 overflow-hidden hover:shadow-md transition-shadow"
+              >
+                {capsule.imageUrl ? (
+                  <img
+                    src={capsule.imageUrl}                    alt={capsule.name}
+                    className="h-48 w-full object-cover"
+                  />
+                ) : (
+                  <div className="bg-gradient-to-r from-red-100 to-rose-100 h-48 flex items-center justify-center">
+                    <svg
+                      className="w-12 h-12 text-red-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                      />
+                    </svg>
+                  </div>
+                )}
                 <div className="p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Capsula Culturală #{item}</h3>
-                  <p className="text-gray-600 mb-4">Descrierea scurtă a capsulei culturale și a tradițiilor locale...</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-red-500 font-medium">Brașov, România</span>
-                    <button className="text-red-500 hover:text-red-600 font-medium">
-                      Explorează →
-                    </button>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    {capsule.name}
+                  </h3>
+                  <p className="text-gray-600 mb-4 line-clamp-3">
+                    {capsule.description}
+                  </p>
+                  <div className="text-sm text-gray-500">
+                    {new Date(capsule.createdAt).toLocaleDateString('ro-RO')}
                   </div>
                 </div>
               </div>
