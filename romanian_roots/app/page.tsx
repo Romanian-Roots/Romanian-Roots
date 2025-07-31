@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import NavBar from '@/components/NavBar';
 import Image from 'next/image';
 
 export default function Home() {
@@ -10,71 +11,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      {/* Navigation Bar */}
-      <nav className="bg-white shadow-sm border-b border-red-100 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          {/* Logo/Brand */}
-          <div className="text-xl font-bold text-red-600">
-            Capsula Culturală
-          </div>
-          
-          {/* Navigation Links and Profile Menu */}
-          <div className="flex items-center space-x-6">
-            {/* Navigation Links */}
-            <div className="hidden md:flex space-x-6">
-              <button 
-                onClick={() => router.push('/harta')}
-                className="text-gray-600 hover:text-red-500 transition-colors"
-              >
-                Harta
-              </button>
-              <button 
-                onClick={() => router.push('/despre-noi')}
-                className="text-gray-600 hover:text-red-500 transition-colors"
-              >
-                Despre noi
-              </button>
-              <button 
-                onClick={() => router.push('/contact')}
-                className="text-gray-600 hover:text-red-500 transition-colors"
-              >
-                Contact
-              </button>
-            </div>
-
-            {/* Profile Menu */}
-            <div className="relative">
-              <button
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-              >
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </button>
-              
-              {showProfileMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
-                  <button
-                    onClick={() => router.push('/login')}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Log In
-                  </button>
-                  <button
-                    onClick={() => router.push('/signup')}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Sign Up
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Main Content */}
+      <NavBar />
+           {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid md:grid-cols-2 gap-6 items-center">
           {/* Logo Section */}
