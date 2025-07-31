@@ -7,6 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/* ------------------------------------------------------------------ */
+/*  Models                                                            */
+/* ------------------------------------------------------------------ */
+
+model User {
+  id        String           @id @default(uuid())
+  name      String
+  email     String           @unique
+  password  String
+  isPremium Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  capsules  CultureCapsule[]
+}
+
 model CultureCapsule {
   id          String   @id @default(uuid())
   title       String
@@ -14,17 +29,15 @@ model CultureCapsule {
   imageUrl    String?
   createdAt   DateTime @default(now())
 
+  /* Geo-location  -------------------------------------------------- */
+  latitude    Float
+  longitude   Float
+
+  /* Status & code  ------------------------------------------------- */
+  found       Boolean  @default(false)  // toggled when code is validated
+  codeHash    String                  // hashed 4-digit code
+
+  /* Relation to creator  ------------------------------------------ */
   userId String
-  user   User   @relation(fields: [userId], references: [id])
-}
-
-model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  isPremium Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  capsules  CultureCapsule[]
+  user   User     @relation(fields: [userId], references: [id])
 }
