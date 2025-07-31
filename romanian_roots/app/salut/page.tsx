@@ -16,7 +16,14 @@ export default function SalutPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [capsules, setCapsules] = useState<Capsule[]>([]);
-  const [form, setForm] = useState({ title: '', description: '', imageUrl: '' });
+const [form, setForm] = useState({
+  name: '',
+  description: '',
+  imageUrl: '',
+  latitude: '',
+  longitude: '',
+});
+
   const [showForm, setShowForm] = useState(false);
 
   /* 1️⃣ fetch on mount */
@@ -30,20 +37,41 @@ export default function SalutPage() {
   }, [status]);
 
   /* 2️⃣ add capsule */
-  async function handleAdd(e: FormEvent) {
-    e.preventDefault();
-    const res = await fetch('/api/capsules', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
-    });
-    if (res.ok) {
-      const created: Capsule = await res.json();
-      setCapsules(prev => [created, ...prev]);
-      setForm({ title: '', description: '', imageUrl: '' });
-      setShowForm(false);
-    }
+async function handleAdd(e: FormEvent) {
+  e.preventDefault();
+
+  // parse coords
+  const lat = parseFloat(form.latitude);
+  const lng = parseFloat(form.longitude);
+  if (isNaN(lat) || isNaN(lng)) {
+    alert('Te rog introdu coordonate valide.');
+    return;
   }
+
+  const res = await fetch('/api/capsules', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: form.name,
+      description: form.description,
+      imageUrl: form.imageUrl || undefined,
+      latitude: lat,
+      longitude: lng,
+    }),
+  });
+  const data = await res.json();
+
+  if (res.ok) {
+    // show generated code
+    alert(`Codul capsulei: ${data.code}`);
+    setCapsules(prev => [data.capsule, ...prev]);
+    setForm({ name: '', description: '', imageUrl: '', latitude: '', longitude: '' });
+    setShowForm(false);
+  } else {
+    alert(data.error || 'Eroare la creare.');
+  }
+}
+
 
   /* 3️⃣ delete */
   async function handleDelete(id: string) {
@@ -165,53 +193,55 @@ export default function SalutPage() {
           <div className="bg-white rounded-lg shadow-sm border border-red-100 p-8 mb-12 max-w-2xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Adaugă o Capsulă Culturală</h2>
             <form onSubmit={handleAdd} className="space-y-6">
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                  Titlul capsulei *
-                </label>
+              <input
+                type="text"
+                placeholder="Numele capsulei"
+                value={form.name}
+                onChange={e => setForm({ ...form, name: e.target.value })}
+                required
+                className="w-full px-4 py-3 border rounded-lg"
+              />
+
+              <textarea
+                placeholder="Descriere"
+                value={form.description}
+                onChange={e => setForm({ ...form, description: e.target.value })}
+                required
+                className="w-full px-4 py-3 border rounded-lg"
+              />
+
+              <input
+                type="url"
+                placeholder="URL imagine (opțional)"
+                value={form.imageUrl}
+                onChange={e => setForm({ ...form, imageUrl: e.target.value })}
+                className="w-full px-4 py-3 border rounded-lg"
+              />
+
+              <div className="grid grid-cols-2 gap-4">
                 <input
-                  type="text"
-                  id="title"
-                  placeholder="Ex: Tradiția olăritului din Horezu"
-                  value={form.title}
-                  onChange={e => setForm({ ...form, title: e.target.value })}
+                  type="number"
+                  step="0.0001"
+                  placeholder="Latitudine (e.g. 45.9432)"
+                  value={form.latitude}
+                  onChange={e => setForm({ ...form, latitude: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 transition-colors text-gray-900"
+                  className="w-full px-4 py-3 border rounded-lg"
                 />
-              </div>
-              
-              <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                  Descrierea *
-                </label>
-                <textarea
-                  id="description"
-                  rows={4}
-                  placeholder="Descrie tradiția, obiceiul sau povestea culturală..."
-                  value={form.description}
-                  onChange={e => setForm({ ...form, description: e.target.value })}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 transition-colors text-gray-900 resize-none"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-2">
-                  URL imagine (opțional)
-                </label>
                 <input
-                  type="url"
-                  id="imageUrl"
-                  placeholder="https://exemplu.com/imagine.jpg"
-                  value={form.imageUrl}
-                  onChange={e => setForm({ ...form, imageUrl: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 transition-colors text-gray-900"
+                  type="number"
+                  step="0.0001"
+                  placeholder="Longitudine (e.g. 24.9668)"
+                  value={form.longitude}
+                  onChange={e => setForm({ ...form, longitude: e.target.value })}
+                  required
+                  className="w-full px-4 py-3 border rounded-lg"
                 />
               </div>
-              
-              <button 
-                type="submit" 
-                className="w-full bg-red-400 text-white py-3 px-6 rounded-lg hover:bg-red-500 transition-colors font-medium text-lg"
+
+              <button
+                type="submit"
+                className="w-full bg-red-400 text-white py-3 rounded-lg"
               >
                 Creează Capsula
               </button>
