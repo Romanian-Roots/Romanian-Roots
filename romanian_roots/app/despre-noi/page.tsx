@@ -7,8 +7,6 @@ import NavBar from '@/components/NavBar';
 
 export default function DespreNoiPage() {
   const router = useRouter();
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
     <div className="min-h-screen bg-stone-50">

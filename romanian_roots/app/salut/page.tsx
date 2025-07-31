@@ -15,6 +15,7 @@ type Capsule = {
 export default function SalutPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [codeInput, setCodeInput] = useState('');
   const [capsules, setCapsules] = useState<Capsule[]>([]);
 const [form, setForm] = useState({
   name: '',
@@ -187,7 +188,52 @@ async function handleAdd(e: FormEvent) {
             Explorează Harta
           </button>
         </div>
-
+  {/* 4-digit code input for “finding” a capsule */}
+  <div className="max-w-md mx-auto mb-12">
+    <form
+      onSubmit={async e => {
+        e.preventDefault();
+        if (!codeInput.match(/^\d{4}$/)) {
+          alert('Te rog introdu un cod de 4 cifre.');
+          return;
+        }
+        const res = await fetch('/api/verify-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: codeInput }),
+       });
+        if (res.ok) {
+          const { wasNewFind } = await res.json();
+          alert(wasNewFind
+            ? 'Felicitări! Ai descoperit o nouă capsulă!'
+            : 'Capsula fusese deja găsită anterior.');
+        } else {
+          alert('Cod nevalid sau nu există capsule cu acest cod.');
+        }
+        setCodeInput('');
+      }}
+      className="bg-white p-6 rounded-lg shadow-sm border border-red-100"
+    >
+      <h3 className="text-lg font-medium text-gray-900 mb-2">Introdu codul capsulei găsite</h3>
+      <div className="flex space-x-2">
+        <input
+          type="text"
+          maxLength={4}
+          value={codeInput}
+          onChange={e => setCodeInput(e.target.value)}
+          placeholder="1234"
+          className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 text-center"
+        />
+        <button
+          type="submit"
+          className="bg-red-400 text-white px-6 rounded-lg hover:bg-red-500 transition-colors font-medium"
+        >
+          Verifică
+        </button>
+      </div>
+    </form>
+  </div>
+  {/* ———————————————— */}
         {/* Add Capsule Form */}
         {showForm && (
           <div className="bg-white rounded-lg shadow-sm border border-red-100 p-8 mb-12 max-w-2xl mx-auto">
