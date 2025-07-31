@@ -21,13 +21,25 @@ export default function ContactPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement form submission
-    console.log('Form submitted:', formData);
-    alert('Mesajul a fost trimis! Vă vom contacta în curând.');
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Unknown error');
+
+    alert('Mesaj trimis cu succes!');
     setFormData({ name: '', email: '', subject: '', message: '' });
-  };
+  } catch (error) {
+    console.error(error);
+    alert('Eroare la trimitere. Te rog încearcă din nou.');
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-stone-50">
