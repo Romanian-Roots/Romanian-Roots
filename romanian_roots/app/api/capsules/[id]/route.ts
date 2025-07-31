@@ -3,41 +3,75 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-/** helper – extract the `[id]` segment from the URL */
-function getId(req: NextRequest): string {
-  // pathname like “…/api/capsules/<id>”
-  return req.nextUrl.pathname.split('/').pop() as string;
-}
+/* utility – extract <id> from /api/capsules/[id] */
+const getId = (req: NextRequest) =>
+  req.nextUrl.pathname.split('/').pop() as string;
 
-/* GET /api/capsules/[id] --------------------------------------------------- */
+/* ─────────────────────────────────────────────────────────────── GET ─── */
 export async function GET(req: NextRequest) {
   const id = getId(req);
 
-  const capsule = await prisma.cultureCapsule.findUnique({ where: { id } });
+  const capsule = await prisma.cultureCapsule.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      imageUrl: true,
+      latitude: true,
+      longitude: true,
+      found: true,
+      createdAt: true,
+      user: { select: { id: true, name: true } },
+    }, // codeHash intentionally omitted
+  });
+
   if (!capsule)
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   return NextResponse.json(capsule);
 }
 
-/* PUT /api/capsules/[id] --------------------------------------------------- */
+/* ─────────────────────────────────────────────────────────────── PUT ─── */
 export async function PUT(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const id = getId(req);
-  const { title, description, imageUrl } = await req.json();
+  const {
+    title,
+    description,
+    imageUrl,
+    latitude,
+    longitude,
+  }: Partial<{
+    title: string;
+    description: string;
+    imageUrl: string;
+    latitude: number;
+    longitude: number;
+  }> = await req.json();
 
   const updated = await prisma.cultureCapsule.update({
     where: { id },
-    data: { title, description, imageUrl },
+    data: { title, description, imageUrl, latitude, longitude },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      imageUrl: true,
+      latitude: true,
+      longitude: true,
+      found: true,
+      createdAt: true,
+    },
   });
 
   return NextResponse.json(updated);
 }
 
-/* DELETE /api/capsules/[id] ----------------------------------------------- */
+/* ──────────────────────────────────────────────────────────── DELETE ─── */
 export async function DELETE(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email)
