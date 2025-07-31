@@ -28,14 +28,17 @@ const [form, setForm] = useState({
   const [showForm, setShowForm] = useState(false);
 
   /* 1️⃣ fetch on mount */
-  useEffect(() => {
-    if (status === 'authenticated') {
-      fetch('/api/capsules')
-        .then(res => res.json())
-        .then(setCapsules)
-        .catch(console.error);
-    }
-  }, [status]);
+useEffect(() => {
+  if (status === 'authenticated') {
+    fetch('/api/capsules?mine=true')
+      .then(res => {
+        if (!res.ok) throw new Error('Unauthorized')
+        return res.json()
+      })
+      .then((caps: Capsule[]) => setCapsules(caps))
+      .catch(console.error)
+  }
+}, [status])
 
   /* 2️⃣ add capsule */
 async function handleAdd(e: FormEvent) {
