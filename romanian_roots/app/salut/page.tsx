@@ -191,62 +191,94 @@ async function handleAdd(e: FormEvent) {
         {/* Add Capsule Form */}
         {showForm && (
           <div className="bg-white rounded-lg shadow-sm border border-red-100 p-8 mb-12 max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Adaugă o Capsulă Culturală</h2>
-            <form onSubmit={handleAdd} className="space-y-6">
-              <input
-                type="text"
-                placeholder="Numele capsulei"
-                value={form.name}
-                onChange={e => setForm({ ...form, name: e.target.value })}
-                required
-                className="w-full px-4 py-3 border rounded-lg"
-              />
+  <h2 className="text-2xl font-bold text-gray-900 mb-6">Adaugă o Capsulă Culturală</h2>
+  <form onSubmit={handleAdd} className="space-y-6">
+    <div>
+      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+        Numele capsulei *
+      </label>
+      <input
+        type="text"
+        id="name"
+        placeholder="Ex: Tradiția olăritului din Horezu"
+        value={form.name}
+        onChange={e => setForm({ ...form, name: e.target.value })}
+        required
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 transition-colors text-gray-900"
+      />
+    </div>
 
-              <textarea
-                placeholder="Descriere"
-                value={form.description}
-                onChange={e => setForm({ ...form, description: e.target.value })}
-                required
-                className="w-full px-4 py-3 border rounded-lg"
-              />
+    <div>
+      <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+        Descrierea *
+      </label>
+      <textarea
+        id="description"
+        rows={4}
+        placeholder="Descrie locația sau un indiciu..."
+        value={form.description}
+        onChange={e => setForm({ ...form, description: e.target.value })}
+        required
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 transition-colors text-gray-900 resize-none"
+      />
+    </div>
 
-              <input
-                type="url"
-                placeholder="URL imagine (opțional)"
-                value={form.imageUrl}
-                onChange={e => setForm({ ...form, imageUrl: e.target.value })}
-                className="w-full px-4 py-3 border rounded-lg"
-              />
+    <div>
+      <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-2">
+        URL imagine (opțional)
+      </label>
+      <input
+        type="url"
+        id="imageUrl"
+        placeholder="https://exemplu.com/imagine.jpg"
+        value={form.imageUrl}
+        onChange={e => setForm({ ...form, imageUrl: e.target.value })}
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 transition-colors text-gray-900"
+      />
+    </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="number"
-                  step="0.0001"
-                  placeholder="Latitudine (e.g. 45.9432)"
-                  value={form.latitude}
-                  onChange={e => setForm({ ...form, latitude: e.target.value })}
-                  required
-                  className="w-full px-4 py-3 border rounded-lg"
-                />
-                <input
-                  type="number"
-                  step="0.0001"
-                  placeholder="Longitudine (e.g. 24.9668)"
-                  value={form.longitude}
-                  onChange={e => setForm({ ...form, longitude: e.target.value })}
-                  required
-                  className="w-full px-4 py-3 border rounded-lg"
-                />
-              </div>
+    <div className="grid grid-cols-2 gap-4">
+      <div>
+        <label htmlFor="latitude" className="block text-sm font-medium text-gray-700 mb-2">
+          Latitudine *
+        </label>
+        <input
+          type="number"
+          step="0.0001"
+          id="latitude"
+          placeholder="e.g. 45.9432"
+          value={form.latitude}
+          onChange={e => setForm({ ...form, latitude: e.target.value })}
+          required
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 transition-colors text-gray-900"
+        />
+      </div>
+      <div>
+        <label htmlFor="longitude" className="block text-sm font-medium text-gray-700 mb-2">
+          Longitudine *
+        </label>
+        <input
+          type="number"
+          step="0.0001"
+          id="longitude"
+          placeholder="e.g. 24.9668"
+          value={form.longitude}
+          onChange={e => setForm({ ...form, longitude: e.target.value })}
+          required
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 transition-colors text-gray-900"
+        />
+      </div>
+    </div>
 
-              <button
-                type="submit"
-                className="w-full bg-red-400 text-white py-3 rounded-lg"
-              >
-                Creează Capsula
-              </button>
-            </form>
-          </div>
+    <button
+      type="submit"
+      className="w-full bg-red-400 text-white py-3 px-6 rounded-lg hover:bg-red-500 transition-colors font-medium text-lg"
+    >
+      Creează Capsula
+    </button>
+  </form>
+</div>
+
         )}
 
         {/* Capsules Section */}
