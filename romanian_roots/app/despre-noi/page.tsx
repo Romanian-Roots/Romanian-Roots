@@ -2,10 +2,12 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function DespreNoiPage() {
   const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -22,7 +24,7 @@ export default function DespreNoiPage() {
           
           {/* Navigation Links and Profile Menu */}
           <div className="flex items-center space-x-6">
-            {/* Navigation Links */}
+            {/* Desktop Navigation Links */}
             <div className="hidden md:flex space-x-6">
               <button 
                 onClick={() => router.push('/harta')}
@@ -44,8 +46,18 @@ export default function DespreNoiPage() {
               </button>
             </div>
 
-            {/* Profile Menu */}
-            <div className="relative">
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+
+            {/* Desktop Profile Menu */}
+            <div className="relative hidden md:block">
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
                 className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -74,6 +86,61 @@ export default function DespreNoiPage() {
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {showMobileMenu && (
+          <div className="md:hidden mt-4 py-4 border-t border-red-100">
+            <div className="flex flex-col space-y-4">
+              <button 
+                onClick={() => {
+                  router.push('/harta');
+                  setShowMobileMenu(false);
+                }}
+                className="text-left text-gray-600 hover:text-red-500 transition-colors py-2"
+              >
+                Harta
+              </button>
+              <button 
+                onClick={() => {
+                  router.push('/despre-noi');
+                  setShowMobileMenu(false);
+                }}
+                className="text-left text-red-500 font-medium transition-colors py-2"
+              >
+                Despre noi
+              </button>
+              <button 
+                onClick={() => {
+                  router.push('/contact');
+                  setShowMobileMenu(false);
+                }}
+                className="text-left text-gray-600 hover:text-red-500 transition-colors py-2"
+              >
+                Contact
+              </button>
+              <div className="border-t border-gray-200 pt-4 mt-4">
+                <button
+                  onClick={() => {
+                    router.push('/login');
+                    setShowMobileMenu(false);
+                  }}
+                  className="block w-full text-left text-gray-700 hover:text-red-500 transition-colors py-2"
+                >
+                  Log In
+                </button>
+                <button
+                  onClick={() => {
+                    router.push('/signup');
+                    setShowMobileMenu(false);
+                  }}
+                  className="block w-full text-left text-gray-700 hover:text-red-500 transition-colors py-2"
+                >
+                  Sign Up
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Main Content */}
@@ -113,13 +180,14 @@ export default function DespreNoiPage() {
               </button>
             </div>
           </div>
-          <div className="bg-gradient-to-br from-red-100 to-rose-100 rounded-lg p-8 h-96 flex items-center justify-center">
-            <div className="text-center">
-              <svg className="w-24 h-24 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p className="text-gray-600 font-medium">Imaginea cu harta României</p>
-            </div>
+          <div className="rounded-lg h-96 overflow-hidden">
+            <Image
+              src="/map.png"
+              alt="Harta României"
+              width={400}
+              height={300}
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
 
@@ -251,16 +319,26 @@ export default function DespreNoiPage() {
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">Echipa noastră</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { name: "Asandei Georgiana", role: "Dezvoltator", description: "Ceva drăguț despre tine" },
-              { name: "Beudean Carmen", role: "Dezvoltator", description: "Ceva drăguț despre tine" },
-              { name: "Zsigmond Arthur", role: "Dezvoltator", description: "Ceva drăguț despre tine" },
-              { name: "Jakab Mihaly", role: "Dezvoltator", description: "Ceva drăguț despre tine" }
+              { name: "Beudean Carmen", role: "Planning Expert", description: "Dornică să călătoresc", image: "carmen.jpg" },
+              { name: "Asandei Georgiana", role: "Frontend developer", description: "Mereu curioasă", image: "georgi.jpg" },
+              { name: "Zsigmond Arthur", role: "Backend developer", description: "Încântat să ajut cultura românească", image: "arthur.jpg" },
+              { name: "Jakab Mihaly", role: "Graphic Designer", description: "Absorbit de viața de urbană", image: "misi.jpg" }
             ].map((member, index) => (
               <div key={index} className="bg-white rounded-lg p-6 shadow-sm border border-red-100 text-center">
-                <div className="bg-gradient-to-br from-red-100 to-rose-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
+                <div className="bg-gradient-to-br from-red-100 to-rose-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4 overflow-hidden">
+                  {member.image ? (
+                    <Image
+                      src={`/${member.image}`}
+                      alt={member.name}
+                      width={96}
+                      height={96}
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  ) : (
+                    <svg className="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  )}
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">{member.name}</h3>
                 <p className="text-red-500 font-medium mb-3">{member.role}</p>
