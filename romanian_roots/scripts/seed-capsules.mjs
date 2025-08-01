@@ -8,65 +8,24 @@ const prisma = new PrismaClient();
 /* ------------------------------------------------------------------ */
 const SEED_CAPSULES = [
   {
-    name: 'Capsula Bucharest – KM 0',
+    name: 'Capsula Bucharest 2',
     description: 'O capsulă culturală în inima capitalei.',
-    latitude: 44.4268,
-    longitude: 26.1025,
+    latitude: 44.8768,
+    longitude: 26.1925,
   },
   {
-    name: 'Capsula Cluj – Piața Unirii',
+    name: 'Capsula Cluj 2',
     description: 'Descoperă spiritul vibrant al Clujului.',
-    latitude: 46.7703,
-    longitude: 23.5917,
+    latitude: 46.1103,
+    longitude: 23.2317,
   },
   {
-    name: 'Capsula Iași – Copou',
+    name: 'Capsula Iași 2',
     description: 'În cel mai vechi parc din oraș.',
-    latitude: 47.1830,
-    longitude: 27.5751,
+    latitude: 47.2930,
+    longitude: 27.7851,
   },
-  {
-    name: 'Capsula Timișoara – Bega',
-    description: 'Pe malul canalului Bega.',
-    latitude: 45.7537,
-    longitude: 21.2257,
-  },
-  {
-    name: 'Capsula Brașov – Tâmpa',
-    description: 'Sub literele „BRAȘOV”.',
-    latitude: 45.6433,
-    longitude: 25.5880,
-  },
-  {
-    name: 'Capsula Constanța – Cazino',
-    description: 'La țărmul Mării Negre.',
-    latitude: 44.1760,
-    longitude: 28.6611,
-  },
-  {
-    name: 'Capsula Sibiu – Podul Minciunilor',
-    description: 'În centrul vechi al Sibiului.',
-    latitude: 45.7983,
-    longitude: 24.1510,
-  },
-  {
-    name: 'Capsula Oradea – Piața Unirii',
-    description: 'Art-nouveau și istorie.',
-    latitude: 47.0547,
-    longitude: 21.9281,
-  },
-  {
-    name: 'Capsula Sighișoara – Cetate',
-    description: 'Orașul medieval în miniatură.',
-    latitude: 46.2190,
-    longitude: 24.7924,
-  },
-  {
-    name: 'Capsula Suceava – Cetatea de Scaun',
-    description: 'Pe urmele voievozilor.',
-    latitude: 47.6519,
-    longitude: 26.2556,
-  },
+  
 ];
 
 /* ------------------------------------------------------------------ */
@@ -97,7 +56,7 @@ const SEED_CAPSULES = [
       await prisma.cultureCapsule.create({
         data: {
           ...seed,
-          status: 'FOUND',         // enum value
+          status: 'CLUE',         // enum value
           imageUrl: null,
           codeHash,
           userId: admin.id,
